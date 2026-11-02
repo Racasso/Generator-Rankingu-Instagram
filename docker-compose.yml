@@ -1,0 +1,51 @@
+services:
+  mongo:
+    image: mongo:8.0
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build: .
+    command: ["uvicorn", "app.api:app", "--host", "0.0.0.0", "--port", "8000"]
+    restart: unless-stopped
+    environment:
+      MONGODB_URI: mongodb://mongo:27017
+      MONGODB_DATABASE: ${MONGODB_DATABASE:-creator_ranker}
+      APIFY_TOKEN: ${APIFY_TOKEN:-}
+      APIFY_POSTS_ACTOR_ID: ${APIFY_POSTS_ACTOR_ID:-apify/instagram-post-scraper}
+      APIFY_PROFILE_ACTOR_ID: ${APIFY_PROFILE_ACTOR_ID:-apify/instagram-profile-scraper}
+      APIFY_MAX_RUN_COST_USD: ${APIFY_MAX_RUN_COST_USD:-0.50}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "8000:8000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  worker:
+    build: .
+    command: ["python", "-m", "app.worker"]
+    restart: unless-stopped
+    environment:
+      MONGODB_URI: mongodb://mongo:27017
+      MONGODB_DATABASE: ${MONGODB_DATABASE:-creator_ranker}
+      APIFY_TOKEN: ${APIFY_TOKEN:-}
+      APIFY_POSTS_ACTOR_ID: ${APIFY_POSTS_ACTOR_ID:-apify/instagram-post-scraper}
+      APIFY_PROFILE_ACTOR_ID: ${APIFY_PROFILE_ACTOR_ID:-apify/instagram-profile-scraper}
+      APIFY_MAX_RUN_COST_USD: ${APIFY_MAX_RUN_COST_USD:-0.50}
+      WORKER_POLL_SECONDS: ${WORKER_POLL_SECONDS:-2}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+volumes:
+  mongo_data:

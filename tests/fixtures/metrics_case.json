@@ -1,0 +1,44 @@
+{
+  "note": "Synthetic values used only to verify campaign metric aggregation.",
+  "creator": {
+    "username": "test_creator",
+    "followers_count": 10000
+  },
+  "other_creator": {
+    "username": "test_creator_two",
+    "followers_count": 1000000
+  },
+  "posts": [
+    {
+      "url": "https://www.instagram.com/p/test001/",
+      "username": "test_creator",
+      "media_type": "Video",
+      "likes": 100,
+      "comments": 20,
+      "video_plays": 300
+    },
+    {
+      "url": "https://www.instagram.com/p/test002/",
+      "username": "test_creator",
+      "media_type": "Image",
+      "likes": 50,
+      "comments": 10,
+      "video_plays": null
+    }
+  ],
+  "other_post": {
+    "url": "https://www.instagram.com/p/test003/",
+    "username": "test_creator_two",
+    "media_type": "Image",
+    "likes": 100,
+    "comments": 0,
+    "video_plays": null
+  },
+  "expected": {
+    "post_count": 2,
+    "likes_total": 150,
+    "comments_total": 30,
+    "video_plays_total": 300,
+    "engagement_rate_by_followers_pct": 0.9
+  }
+}
