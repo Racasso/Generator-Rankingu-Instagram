@@ -1,4 +1,4 @@
-# Oskar Kuban — ranking twórców Instagram
+# Ranking twórców Instagram
 
 Backend REST API do tworzenia kampanii Instagram, pobierania publicznych danych o postach i profilach przez aktory Apify Store oraz zwracania rankingu twórców. Dane są przechowywane w MongoDB, a pobieranie wykonują workery działające w tle.
 
